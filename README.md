@@ -5,23 +5,9 @@ A reproducible research project using the supplied 2,000-batch EdTech dataset. I
 
 **AI assistance disclosure:** this project was prepared with AI assistance. The original assessment explicitly prohibits LLM assistance. Use this as a learning/reference project unless your evaluator authorizes an AI-assisted submission. The analysis itself calls no LLMs, external APIs, external datasets or AutoML services.
 
-## Executed findings
+## Public repository contents
 
-| Measure | Result |
-|---|---:|
-| Supplied batches / instructors / courses | 2,000 / 120 / 25 |
-| Development / held-out instructors | 90 / 30 |
-| Selected estimator | Logistic regression |
-| Development three-fold mean macro F1 | 0.686 |
-| Held-out macro F1 | 0.533 |
-| Held-out balanced accuracy | 0.548 |
-| Circular full-score reconstruction macro F1 | 1.000 — formula reproduction only |
-| Instructors changing descriptive tier under any sensitivity scenario | 17 / 120 |
-| Conditional 90% intervals crossing a descriptive boundary | 49 / 120 |
-
-These are concurrent associations with constructed proxy labels. There is no independent effectiveness ground truth, causal claim, future prediction claim, or production-readiness claim. Three-fold model-selection results are not an unbiased substitute for the held-out result.
-
-![Held-out evaluation and development validation](outputs/evaluation.png)
+This repository currently contains the source code and a notebook without stored cell outputs. The original CSV, trained model files, generated tables/charts and executed notebook outputs are withheld pending explicit approval to publish dataset-derived information. See OUTPUTS_NOTICE.md. The full executed package is available separately to the owner.
 
 ## How it works
 
@@ -33,8 +19,6 @@ These are concurrent associations with constructed proxy labels. There is no ind
 6. For the primary ML task, define an outcome-only tier and predict it using engagement means/SDs and counts. Exclude outcome ingredients, IDs and feedback. A separate circular experiment demonstrates why giving a model its label ingredients can produce misleadingly high results.
 7. Compare dummy, logistic and shallow random-forest models. Refit scoring references and label cuts inside every development fold. Select by mean macro F1, then evaluate once on unseen instructors.
 8. Examine permutation importance, alternative weighting/course/shrinkage policies, nearby cutoffs and conditional within-instructor batch-resampling intervals.
-
-The largest positive permutation contributions on this holdout were mean forum activity (~0.071 macro-F1 decrease on shuffling) and mean assignment submission (~0.063). Repeat SDs were ~0.065 and ~0.058 respectively: the estimates are noisy. Neither establishes a causal driver. Negative permutation importances elsewhere do not justify post-hoc feature deletion on this test set.
 
 ## Run the notebook
 
@@ -60,31 +44,19 @@ python predict.py --input data/instructor_batches.csv --output outputs/new_predi
 
 Run from the repository root. Prediction produces one row per instructor and requires the complete input schema. The classifier itself consumes only engagement/count features. A newly supplied instructor needs observed batch data; the model cannot predict from an ID alone.
 
-## Files
+## Included files
 
-| File/folder | Purpose |
-|---|---|
-| `Beyond_Ratings.ipynb` | Single self-contained notebook with explanations, executed outputs and all five mandatory answers |
-| `effectiveness.py` | Reusable scoring, training and inference functions matching the notebook |
-| `train.py` / `predict.py` | Command-line entry points |
-| `data/instructor_batches.csv` | Unmodified supplied CSV |
-| `models/evaluated_model.pkl` | Development-fitted estimator and reference policy used for the held-out result |
-| `models/instructor_model.pkl` | Selected estimator and policy refit on all supplied instructors for research inference |
-| `outputs/metrics.json` | Recorded evaluation metrics and caveats |
-| `outputs/cv_folds.csv` / `cv_summary.csv` | Development validation results |
-| `outputs/heldout_predictions.csv` | Actual constructed labels, predictions, probabilities and review flags |
-| `outputs/descriptive_instructor_scores.csv` | Full-composite scores, tiers and evidence counts |
-| `outputs/tier_stability.csv` | Per-instructor sensitivity results |
-| `outputs/conditional_score_intervals.csv` | Conditional batch-resampling intervals |
-| `outputs/*.png` | EDA, evaluation, importance, sensitivity and uncertainty figures |
-| `MODEL_CARD.md` | Intended use and limitations |
-| `publish.sh` | Optional GitHub CLI creation/push script; private repository by default |
+- `Beyond_Ratings.ipynb`: self-contained analysis code and methodological explanations; no stored outputs.
+- `effectiveness.py`: reusable scoring, training and prediction functions.
+- `train.py` and `predict.py`: command-line entry points.
+- `requirements.txt`: pinned analysis dependencies.
+- `OUTPUTS_NOTICE.md`: status of dataset, trained models and results publication.
 
-The two model files serve different purposes. The full-data refit has no separate measured performance; do not attach the held-out metrics to it as an independent evaluation. Pickle artifacts include scikit-learn estimators, pandas references, feature order and tier policies; load only trusted artifacts using compatible package versions.
+Create `data/` and provide an authorized `instructor_batches.csv` before running. The analysis recreates `models/` and `outputs/` locally. Load only trusted pickle model artifacts.
 
 ## Verification
 
-All 12 Python code cells were executed in order in one shared Python process, with stdout and matplotlib outputs embedded. Jupyter kernel socket binding was prohibited in the build environment, so execution used an in-process Python runner rather than a live Jupyter kernel. The notebook was schema-validated. It contains plain Python without magics or shell cells. A fresh Python process verified serialized-model inference. Additional checks verify instructor split separation, finite features, valid output tiers and exact reproduction of evaluated-model predictions after reload.
+The complete private working copy was executed in a shared Python process, schema-validated and checked for serialization round trips. The public copy removes stored outputs and data-specific recorded findings. A local run requires an authorized input CSV. No hosted inference service or production deployment is included.
 
 ## Limits and responsible use
 
@@ -100,6 +72,6 @@ All 12 Python code cells were executed in order in one shared Python process, wi
 
 Repository: https://github.com/ayaan2304/beyond-ratings-instructor-effectiveness
 
-The repository contains the executed notebook, source code, supplied dataset, saved research models and generated outputs. No redistribution license was provided for the supplied data; this project does not assign one. The repository's visibility is controlled by its owner.
+The repository contains the source code and code-only notebook. Dataset and output publication is pending explicit approval. No redistribution license was provided for the supplied data; this project does not assign one. The repository's visibility is controlled by its owner.
 
 After cloning, follow the run and prediction instructions above. Retraining rewrites local model/output files; review changes before committing them.
